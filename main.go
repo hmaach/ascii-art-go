@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	ft "asciiart/features"
@@ -11,9 +12,17 @@ func main() {
 	if len(defaultArgs) == 0 || len(defaultArgs[0]) == 0 {
 		return
 	}
-	flag, args := ft.ExtractOutputFlag(defaultArgs)
+	
+	colorFlag, outputFlag := ft.CheckColorFlag(defaultArgs), ft.CheckOutputFlag(defaultArgs)
+	if colorFlag && outputFlag {
+		fmt.Fprintf(os.Stderr, "you can't use '--output' and '--color' in the same commend!\n")
+		os.Exit(1)
+	}
+
+	flag, args := ft.ExtractFlags(defaultArgs)
+
 	if err := ft.CheckArguments(args); err {
-		ft.Usage()
+		ft.Usage("color")
 		os.Exit(0)
 	}
 	// Specify the ASCII art banner file to use
