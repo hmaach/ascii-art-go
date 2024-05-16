@@ -29,6 +29,12 @@ func CheckValidInput(input string) {
 	}
 }
 
-func Usage() {
-	fmt.Fprintf(os.Stderr, "\n   Usage: go run . [OPTION] [STRING] [BANNER]\n\n   Example: go run . --output=<fileName.txt> something standard\n\n")
+func Usage(flag string) {
+	if flag == "output" {
+		fmt.Fprintf(os.Stderr, "\n   Usage: go run . [OPTION] [STRING] [BANNER]\n\n   Example: go run . --output=<fileName.txt> something standard\n\n")
+		os.Exit(0)
+	} else if flag == "color" {
+		fmt.Fprintf(os.Stderr, "\n   Usage: go run . [OPTION] [STRING]\n\n   EX: go run . --color=<color> <letters to be colored> \"something\"\n\n")
+		os.Exit(0)
+	}
 }
