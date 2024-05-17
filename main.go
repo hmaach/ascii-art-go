@@ -22,7 +22,7 @@ func main() {
 	flag, args := ft.ExtractFlags(defaultArgs)
 
 	if err := ft.CheckArguments(args); err {
-		ft.Usage("color")
+		ft.Usage()
 		os.Exit(0)
 	}
 	// Specify the ASCII art banner file to use
