@@ -23,8 +23,8 @@ func GetInputAndBanner(args []string) (string, string) {
 
 // check if arguments are given as one string
 func CheckSingleArgument(args []string) []string {
-	tempArgs := strings.Fields(args[0])
 	if len(args) == 1 {
+		tempArgs := strings.Fields(args[0])
 		for _, v := range tempArgs {
 			if strings.HasPrefix(v, "--") {
 				args = tempArgs
