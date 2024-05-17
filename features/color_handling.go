@@ -17,79 +17,31 @@ const (
 	Reset   = "\033[0m"
 )
 
-func AreLettersToBeColored(chars, str string) bool {
-	if len(chars) > len(str) {
-		return false
-	}
-	for _, char := range chars {
-		found := false
-		for _, s := range str {
-			if char == s {
-				found = true
-				break
-			}
-		}
-		if !found {
-			return false
-		}
-	}
-
-	return true
+var ColorMap = map[string]string{
+	"black":   Black,
+	"red":     Red,
+	"green":   Green,
+	"yellow":  Yellow,
+	"blue":    Blue,
+	"magenta": Magenta,
+	"cyan":    Cyan,
+	"white":   White,
 }
 
-func ConvertLettersToSliceOfRunes(str string) []rune {
-	result := []rune{}
-	for _, char := range str {
-		result = append(result, char)
-	}
-	return result
-}
-
-func PrintStringInColor(s, color string) {
-	var colorCode string
-
-	switch color {
-	case "black":
-		colorCode = Black
-	case "red":
-		colorCode = Red
-	case "green":
-		colorCode = Green
-	case "yellow":
-		colorCode = Yellow
-	case "blue":
-		colorCode = Blue
-	case "magenta":
-		colorCode = Magenta
-	case "cyan":
-		colorCode = Cyan
-	case "white":
-		colorCode = White
-	default:
+func Colorize(s, color string) string {
+	colorCode, exists := ColorMap[color]
+	if !exists {
 		PrintColors()
+		os.Exit(0)
 	}
 
-	fmt.Printf("%s%s%s", colorCode, s, Reset)
-}
-
-func IsInSlice(k rune, slice []rune) bool {
-	for _, v := range slice {
-		if v == k {
-			return true
-		}
-	}
-	return false
+	return fmt.Sprintf("%s%s%s", colorCode, s, Reset)
 }
 
 func PrintColors() {
 	fmt.Println("Invalid color. Please choose one of the following colors:")
-	fmt.Printf("- %sblack%s\n", Black, Reset)
-	fmt.Printf("- %sred%s\n", Red, Reset)
-	fmt.Printf("- %sgreen%s\n", Green, Reset)
-	fmt.Printf("- %syellow%s\n", Yellow, Reset)
-	fmt.Printf("- %sblue%s\n", Blue, Reset)
-	fmt.Printf("- %smagenta%s\n", Magenta, Reset)
-	fmt.Printf("- %scyan%s\n", Cyan, Reset)
-	fmt.Printf("- %swhite%s\n", White, Reset)
-	os.Exit(0)
+	for name, code := range ColorMap {
+		fmt.Printf("- %s%s%s\n", code, name, Reset)
+	}
+	os.Exit(1)
 }

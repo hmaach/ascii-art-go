@@ -6,18 +6,18 @@ func GetInputAndBanner(args []string) (string, string) {
 	var banner string
 	var input string
 
-	if len(args) == 2 {
-		banner = args[1]
-		banner += ".txt"
-	} else {
-		banner = "standard.txt"
-	}
-
-	if len(args) >= 1 {
+	switch len(args) {
+	case 2:
+		banner = args[1] + ".txt"
 		input = args[0]
-	} else {
+	case 1:
+		banner = "standard.txt"
+		input = args[0]
+	default:
+		banner = "standard.txt"
 		input = ""
 	}
+
 	return input, banner
 }
 

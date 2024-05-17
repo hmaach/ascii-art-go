@@ -3,75 +3,72 @@ package asciiart
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
-func CheckOutputFlag(args []string) bool {
-	for _, arg := range args {
-		if strings.HasPrefix(arg, "--output=") {
-			return true
-		}
+var (
+	FlagDefs = map[string]string{
+		"output": "--output=",
+		"color":  "--color=",
 	}
-	return false
-}
-
-func CheckColorFlag(args []string) bool {
-	for _, arg := range args {
-		if strings.HasPrefix(arg, "--color=") {
-			return true
-		}
-	}
-	return false
-}
+	Flag string
+)
 
 func ExtractFlags(args []string) (map[string]string, []string) {
 	flags := make(map[string]string)
 	var filteredArgs []string
-	var indexOfToBeColored int
 
-	for i, arg := range args {
-		if strings.HasPrefix(arg, "--output=") && i == 0 {
-			flags["outputFile"] = extractOutputFileName(arg)
-		} else if strings.HasPrefix(arg, "--color=") && i == 0 {
-			flags["color"] = extractColor(arg)
-			if flags["color"] != "" && i+2 < len(args) {
-				if AreLettersToBeColored(args[i+1], args[i+2]) {
+	for i := 0; i < len(args); i++ {
+		arg := args[i]
+		isFlag := false
+
+		for key, prefix := range FlagDefs {
+			if strings.HasPrefix(arg, prefix) {
+				flagKey, flagValue := ExtractFlagValue(arg)
+				flags[flagKey] = flagValue
+				isFlag = true
+				Flag = key
+
+				if flagKey == "color" && len(args) > i+2 {
 					flags["lettersToBeColored"] = args[i+1]
-					indexOfToBeColored = i + 1
+					i++
 				}
-			}
-		} else if strings.HasPrefix(arg, "--") {
-			Usage("color")
-			os.Exit(0)
-		} else {
-			if i != indexOfToBeColored {
-				filteredArgs = append(filteredArgs, arg)
+				break
 			}
 		}
+
+		if !isFlag {
+			filteredArgs = append(filteredArgs, arg)
+		}
 	}
+	if flags["output"] != "" && flags["color"] != "" {
+		fmt.Fprintf(os.Stderr, "you can't use '--output' and '--color' in the same commend!\n")
+		os.Exit(1)
+	}
+	fmt.Println(flags)
+	fmt.Println(filteredArgs)
 	return flags, filteredArgs
 }
 
-func extractOutputFileName(flag string) string {
-	fileName := strings.TrimPrefix(flag, "--output=")
-	if len(fileName) == 0 {
-		Usage("output")
+func ExtractFlagValue(flag string) (string, string) {
+	splittedFlag := strings.SplitN(flag, "=", 2)
+
+	if len(splittedFlag) < 2 || len(splittedFlag[1]) == 0 {
+		Usage()
 		os.Exit(0)
 	}
-	if fileName != "" {
-		if err := ValidateFileExtension(fileName); err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(0)
+
+	for key, prefix := range FlagDefs {
+		if splittedFlag[0] == prefix[:len(prefix)-1] {
+			if key == "output" && filepath.Ext(splittedFlag[1]) != ".txt" {
+				splittedFlag[1] += ".txt"
+			}
+			return key, strings.ToLower(splittedFlag[1])
 		}
 	}
-	return fileName
-}
 
-func extractColor(flag string) string {
-	color := strings.TrimPrefix(flag, "--color=")
-	if len(color) == 0 {
-		Usage("color")
-		os.Exit(0)
-	}
-	return color
+	Usage()
+	os.Exit(0)
+	return "", ""
 }

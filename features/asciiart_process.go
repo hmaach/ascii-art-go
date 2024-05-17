@@ -1,7 +1,7 @@
 package asciiart
 
 import (
-	"fmt"
+	"slices"
 	"strings"
 )
 
@@ -16,20 +16,21 @@ func ProcessInput(input, banner string, flag map[string]string) {
 	content := strings.Split(data, "\n\n")
 	characterMatrix := ConvertToCharacterMatrix(content)
 
-	if flag["color"] != "" {
-		var runesToBeColored []rune
-		if flag["lettersToBeColored"] != "" {
-			runesToBeColored = ConvertLettersToSliceOfRunes(flag["lettersToBeColored"])
+	var runesToBeColored []rune
+	colorizeAll := true
+	if flag["lettersToBeColored"] != "" {
+		if strings.Contains(input, flag["lettersToBeColored"]) {
+			runesToBeColored = []rune(flag["lettersToBeColored"])
+			colorizeAll = false
+		} else {
 		}
-		DrawASCIIArtWithColor(characterMatrix, splittedInput, hasNonEmptyLines, flag, runesToBeColored)
-	} else {
-		result := DrawASCIIArt(characterMatrix, splittedInput, hasNonEmptyLines)
-		SaveOrPrintResultToFile(flag["outputFile"], result)
 	}
+
+	result := DrawASCIIArt(characterMatrix, splittedInput, hasNonEmptyLines, colorizeAll, flag, runesToBeColored)
+	SaveOrPrintResultToFile(flag["output"], result)
 }
 
-// Render the ASCII art based on the character matrix and the input lines
-func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, hasNonEmptyLines bool) string {
+func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, hasNonEmptyLines, colorizeAll bool, flag map[string]string, runesToBeColored []rune) string {
 	result := ""
 	for i, val := range splittedInput {
 		if val == "" {
@@ -38,45 +39,22 @@ func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, has
 			} else if i != 0 && !hasNonEmptyLines {
 				result += "\n"
 			}
-		} else if val != "" {
-			for j := 0; j < 8; j++ {
-				for _, k := range val {
-					result += characterMatrix[k][j]
-				}
-				result += "\n"
-			}
-		}
-	}
-	return result
-}
-
-func DrawASCIIArtWithColor(characterMatrix map[rune][]string, splittedInput []string, hasNonEmptyLines bool, flag map[string]string, runesToBeColored []rune) string {
-	result := ""
-	for i, val := range splittedInput {
-		if val == "" {
-			if hasNonEmptyLines {
-				fmt.Println()
-			} else if i != 0 && !hasNonEmptyLines {
-				fmt.Println()
-			}
-		} else if val != "" {
+		} else {
 			for j := 0; j < 8; j++ {
 				for _, k := range val {
 					if flag["color"] != "" {
-						if len(runesToBeColored) > 0 {
-							if IsInSlice(k, runesToBeColored) {
-								PrintStringInColor(characterMatrix[k][j], flag["color"])
-							} else {
-								fmt.Printf(characterMatrix[k][j])
-							}
+						if len(runesToBeColored) > 0 && slices.Contains(runesToBeColored, k) {
+							result += Colorize(characterMatrix[k][j], flag["color"])
+						} else if len(runesToBeColored) == 0 && !colorizeAll {
+							result += Colorize(characterMatrix[k][j], flag["color"])
 						} else {
-							PrintStringInColor(characterMatrix[k][j], flag["color"])
+							result += characterMatrix[k][j]
 						}
 					} else {
-						fmt.Printf(characterMatrix[k][j])
+						result += characterMatrix[k][j]
 					}
 				}
-				fmt.Println()
+				result += "\n"
 			}
 		}
 	}
