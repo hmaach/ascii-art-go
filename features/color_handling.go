@@ -14,6 +14,7 @@ const (
 	Magenta = "\033[0;35m"
 	Cyan    = "\033[0;36m"
 	White   = "\033[0;37m"
+	Orange  = "\033[0;38;5;208m"
 	Reset   = "\033[0m"
 )
 
@@ -25,6 +26,7 @@ var ColorMap = map[string]string{
 	"blue":    Blue,
 	"magenta": Magenta,
 	"cyan":    Cyan,
+	"orange":  Orange,
 	"white":   White,
 }
 
