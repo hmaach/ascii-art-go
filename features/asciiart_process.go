@@ -1,62 +1,82 @@
 package asciiart
 
 import (
-	"slices"
 	"strings"
 )
 
+// ProcessInput processes the input string, reads the banner, and produces the ASCII art
 func ProcessInput(input, banner string, flag map[string]string) {
 	splittedInput := strings.Split(input, "\\n")
 	hasNonEmptyLines := CheckEmptyLines(splittedInput)
-	data := ReadBanner(banner)
-
-	if banner == "thinkertoy.txt" {
-		data = strings.ReplaceAll(data, "\r", "")
-	}
-	content := strings.Split(data, "\n\n")
-	characterMatrix := ConvertToCharacterMatrix(content)
+	characterMatrix := ReadBanner(banner)
 
 	var runesToBeColored []rune
 	colorizeAll := true
-	if flag["lettersToBeColored"] != "" {
-		if strings.Contains(input, flag["lettersToBeColored"]) {
-			runesToBeColored = []rune(flag["lettersToBeColored"])
-			colorizeAll = false
-		} else {
-		}
+	lettersToBeColored := flag["lettersToBeColored"]
+
+	if lettersToBeColored != "" && strings.Contains(input, lettersToBeColored) {
+		runesToBeColored = []rune(lettersToBeColored)
+		colorizeAll = false
 	}
 
 	result := DrawASCIIArt(characterMatrix, splittedInput, hasNonEmptyLines, colorizeAll, flag, runesToBeColored)
 	SaveOrPrintResultToFile(flag["output"], result)
 }
 
+// DrawASCIIArt draws ASCII art and colorizes specific substrings
 func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, hasNonEmptyLines, colorizeAll bool, flag map[string]string, runesToBeColored []rune) string {
-	result := ""
+	var result strings.Builder
+	color := flag["color"]
+
 	for i, val := range splittedInput {
 		if val == "" {
-			if hasNonEmptyLines {
-				result += "\n"
-			} else if i != 0 && !hasNonEmptyLines {
-				result += "\n"
+			if hasNonEmptyLines || i != 0 {
+				result.WriteString("\n")
 			}
-		} else {
-			for j := 0; j < 8; j++ {
-				for _, k := range val {
-					if flag["color"] != "" {
-						if len(runesToBeColored) > 0 && slices.Contains(runesToBeColored, k) {
-							result += Colorize(characterMatrix[k][j], flag["color"])
-						} else if len(runesToBeColored) == 0 && !colorizeAll {
-							result += Colorize(characterMatrix[k][j], flag["color"])
-						} else {
-							result += characterMatrix[k][j]
-						}
-					} else {
-						result += characterMatrix[k][j]
-					}
+			continue
+		}
+
+		substringIndices := FindSubStringIndices(val, flag["lettersToBeColored"])
+		substringLen := len(flag["lettersToBeColored"])
+
+		for j := 0; j < 8; j++ {
+			for kIdx, k := range val {
+				shouldColorize := colorizeAll || isInRange(kIdx, substringIndices, substringLen)
+				if color != "" && shouldColorize {
+					result.WriteString(Colorize(characterMatrix[k][j], color))
+				} else {
+					result.WriteString(characterMatrix[k][j])
 				}
-				result += "\n"
 			}
+			result.WriteString("\n")
 		}
 	}
-	return result
+
+	return result.String()
+}
+
+// Checks if the given index is within any of the ranges specified by the start indices and length
+func isInRange(index int, indices []int, length int) bool {
+	for _, start := range indices {
+		if index >= start && index < start+length {
+			return true
+		}
+	}
+	return false
+}
+
+// Returns the start indices of all occurrences of the substring in the main string
+func FindSubStringIndices(str, substr string) []int {
+	var indices []int
+	if len(substr) > 0 {
+		for i := 0; ; {
+			index := strings.Index(str[i:], substr)
+			if index == -1 {
+				break
+			}
+			indices = append(indices, i+index)
+			i += index + len(substr)
+		}
+	}
+	return indices
 }
