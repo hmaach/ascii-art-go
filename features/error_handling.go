@@ -36,8 +36,8 @@ func Usage() {
 	} else if Flag == "color" {
 		fmt.Fprintf(os.Stderr, "   EX: go run . --color=<color> <letters to be colored> \"something\"\n\n")
 	} else {
-		fmt.Fprintf(os.Stderr, "   EX: go run . --output=<fileName.txt> something standard\n\n")
-		fmt.Fprintf(os.Stderr, "\tOR\n\n")
+		fmt.Fprintf(os.Stderr, "   EX: go run . --output=<fileName.txt> something standard\n")
+		fmt.Fprintf(os.Stderr, "OR\n")
 		fmt.Fprintf(os.Stderr, "   EX: go run . --color=<color> <letters to be colored> \"something\" shadow\n\n")
 	}
 	os.Exit(0)
