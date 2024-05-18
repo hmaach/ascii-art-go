@@ -3,16 +3,22 @@ package asciiart
 import (
 	"fmt"
 	"os"
+	"strings"
 )
 
-func ReadBanner(banner string) string {
+func ReadBanner(banner string) map[rune][]string {
 	data, err := os.ReadFile("banners/" + banner)
 	if err != nil {
 		fmt.Printf("Error: %s", err)
 		os.Exit(1)
 	}
 	stringData := string(data[1:])
-	return stringData
+	if banner == "thinkertoy.txt" {
+		stringData = strings.ReplaceAll(stringData, "\r", "")
+	}
+	content := strings.Split(stringData, "\n\n")
+	characterMatrix := ConvertToCharacterMatrix(content)
+	return characterMatrix
 }
 
 func SaveFile(fileName string, str string) error {
