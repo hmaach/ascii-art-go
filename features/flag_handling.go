@@ -1,7 +1,6 @@
 package asciiart
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,6 +15,7 @@ var (
 	Flag string // Current flag being processed
 )
 
+// ExtractFlags extracts flags and their values from command-line arguments
 func ExtractFlags(args []string) (map[string]string, []string) {
 	flags := make(map[string]string)
 	var filteredArgs []string
@@ -23,39 +23,42 @@ func ExtractFlags(args []string) (map[string]string, []string) {
 	for i := 0; i < len(args); i++ {
 		arg := args[i]
 		isFlag := false
-		if strings.HasPrefix(arg, "--") {
-			Flag = strings.Trim(arg,"-=") // use Flag to display the Usage based on the flag
-			for _, key := range FlagDefs {
-				if strings.Contains(arg, key) {
-					// Extract flag key and value
-					flagKey, flagValue := ExtractFlagValue(arg)
-					flags[flagKey] = flagValue
-					isFlag = true
-					// If the color flag is found, check for the letters to be colored
-					if flagKey == "color" && len(args) > i+1 {
-						flags["lettersToBeColored"] = args[i+1]
-						i++
-					}
-					break
+
+		if strings.HasPrefix(arg, "--") && i == 0 {
+			Flag = strings.TrimLeft(arg, "-=")
+			flagKey, flagValue, found := findFlagAndExtractValue(arg)
+			if found {
+				flags[flagKey] = flagValue
+				isFlag = true
+				if flagKey == "color" && len(args) > i+2 {
+					flags["lettersToBeColored"] = args[i+1]
+					i++
 				}
 			}
 		}
-		// If the argument is not a flag, add it to the filtered arguments ([string] and [banner])
+
 		if !isFlag {
 			filteredArgs = append(filteredArgs, arg)
 		}
 	}
+	HandleFlagCombination(flags)
 
-	// Ensure 'output' and 'color' flags are not used together
-	if flags["output"] != "" && flags["color"] != "" {
-		fmt.Fprintf(os.Stderr, "you can't use '--output' and '--color' in the same command!\n")
-		os.Exit(1)
-	}
 	return flags, filteredArgs
 }
 
+// findFlagAndExtractValue searches for a flag in a given argument and extracts its value
+func findFlagAndExtractValue(arg string) (string, string, bool) {
+	for _, key := range FlagDefs {
+		if strings.Contains(arg, key) {
+			flagKey, flagValue := extractFlagValue(arg)
+			return flagKey, flagValue, true
+		}
+	}
+	return "", "", false
+}
+
 // ExtractFlagValue splits a flag into its key and value components
-func ExtractFlagValue(flag string) (string, string) {
+func extractFlagValue(flag string) (string, string) {
 	splittedFlag := strings.SplitN(flag, "=", 2)
 
 	// Handle missing value case

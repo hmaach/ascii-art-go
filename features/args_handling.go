@@ -30,7 +30,7 @@ func CheckSingleArgument(args []string) []string {
 				args = tempArgs
 			}
 		}
-		return tempArgs
+		return args
 	}
 	return args
 }

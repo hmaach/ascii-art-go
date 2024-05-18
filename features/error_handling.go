@@ -29,6 +29,13 @@ func CheckValidInput(input string) {
 	}
 }
 
+func HandleFlagCombination(flags map[string]string) {
+	if flags["output"] != "" && flags["color"] != "" {
+		fmt.Fprintf(os.Stderr, "you can't use '--output' and '--color' in the same command!\n")
+		os.Exit(1)
+	}
+}
+
 func Usage() {
 	fmt.Fprintf(os.Stderr, "\n   Usage: go run . [OPTION] [STRING] [BANNER]\n\n")
 	if Flag == "output" {
