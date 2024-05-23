@@ -1,7 +1,6 @@
 package asciiart
 
 import (
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -64,7 +63,6 @@ func extractFlagValue(flag string) (string, string) {
 	// Handle missing value case
 	if len(splittedFlag) < 2 || len(splittedFlag[1]) == 0 {
 		Usage()
-		os.Exit(0)
 	}
 
 	for _, prefix := range FlagDefs {
@@ -78,6 +76,5 @@ func extractFlagValue(flag string) (string, string) {
 	}
 
 	Usage()
-	os.Exit(0)
 	return "", ""
 }
