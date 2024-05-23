@@ -25,7 +25,7 @@ func ExtractFlags(args []string) (map[string]string, []string) {
 		isFlag := false
 
 		if strings.HasPrefix(arg, "--") && i == 0 {
-			Flag = strings.TrimLeft(arg, "-=")
+			Flag = strings.Trim(arg, "-=")
 			flagKey, flagValue, found := findFlagAndExtractValue(arg)
 			if found {
 				flags[flagKey] = flagValue
