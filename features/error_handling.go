@@ -6,15 +6,18 @@ import (
 	"os"
 )
 
+
 func CheckArguments(args []string) error {
 	argCount := len(args)
 	if argCount == 2 {
-		if args[1] != "shadow" && args[1] != "standard" && args[1] != "thinkertoy" {
-			return errors.New(fmt.Sprintf("invalid banner type '%s'\nAvailable banner types are: 'standard' (default), 'shadow', and 'thinkertoy'\n", args[1]))
+		switch args[1] {
+		case "shadow", "standard", "thinkertoy":
+			// valid banner types, do nothing
+		default:
+			return fmt.Errorf("invalid banner type '%s'\nAvailable banner types are: 'standard' (default), 'shadow', and 'thinkertoy'", args[1])
 		}
-	}
-	if argCount > 2 {
-		return errors.New("too many arguments!")
+	} else if argCount > 2 {
+		return errors.New("too many arguments")
 	}
 	return nil
 }
