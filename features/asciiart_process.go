@@ -11,20 +11,18 @@ func ProcessInput(input, banner string, flag map[string]string) {
 	characterMatrix := ReadBanner(banner)
 
 	var runesToBeColored []rune
-	colorizeAll := true
 	lettersToBeColored := flag["lettersToBeColored"]
 
 	if lettersToBeColored != "" && strings.Contains(input, lettersToBeColored) {
 		runesToBeColored = []rune(lettersToBeColored)
-		colorizeAll = false
 	}
 
-	result := DrawASCIIArt(characterMatrix, splittedInput, hasNonEmptyLines, colorizeAll, flag, runesToBeColored)
+	result := DrawASCIIArt(characterMatrix, splittedInput, hasNonEmptyLines, flag, runesToBeColored)
 	SaveOrPrintResultToFile(flag["output"], result)
 }
 
 // DrawASCIIArt draws ASCII art and colorizes specific substrings
-func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, hasNonEmptyLines, colorizeAll bool, flag map[string]string, runesToBeColored []rune) string {
+func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, hasNonEmptyLines bool, flag map[string]string, runesToBeColored []rune) string {
 	var result strings.Builder
 	color := flag["color"]
 
@@ -41,7 +39,7 @@ func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, has
 
 		for j := 0; j < 8; j++ {
 			for kIdx, k := range val {
-				shouldColorize := colorizeAll || isInRange(kIdx, substringIndices, substringLen)
+				shouldColorize := isInRange(kIdx, substringIndices, substringLen)
 				if color != "" && shouldColorize {
 					result.WriteString(Colorize(characterMatrix[k][j], color))
 				} else {
