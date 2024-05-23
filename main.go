@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	ft "asciiart/features"
@@ -18,9 +19,9 @@ func main() {
 
 	flag, args := ft.ExtractFlags(defaultArgs)
 
-	if err := ft.CheckArguments(args); err {
-		ft.Usage()
-		os.Exit(0)
+	if err := ft.CheckArguments(args); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
 	}
 	// Specify the ASCII art banner file to use
 	input, banner := ft.GetInputAndBanner(args)

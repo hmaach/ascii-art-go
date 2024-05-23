@@ -1,22 +1,22 @@
 package asciiart
 
 import (
+	"errors"
 	"fmt"
 	"os"
 )
 
-func CheckArguments(args []string) bool {
+func CheckArguments(args []string) error {
 	argCount := len(args)
 	if argCount == 2 {
 		if args[1] != "shadow" && args[1] != "standard" && args[1] != "thinkertoy" {
-			fmt.Printf("invalid banner type '%s'\nAvailable banner types are: 'standard' (default), 'shadow', and 'thinkertoy'\n", args[1])
-			os.Exit(0)
+			return errors.New(fmt.Sprintf("invalid banner type '%s'\nAvailable banner types are: 'standard' (default), 'shadow', and 'thinkertoy'\n", args[1]))
 		}
 	}
 	if argCount > 2 {
-		return true
+		return errors.New("too many arguments!")
 	}
-	return false
+	return nil
 }
 
 // validates if the input contains only printable ASCII characters
