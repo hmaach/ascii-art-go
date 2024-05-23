@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-	fmt.Println(rune(' '))
 	defaultArgs := os.Args[1:]
 	if len(defaultArgs) == 0 || len(defaultArgs[0]) == 0 {
 		if len(defaultArgs) > 1 && len(defaultArgs[0]) == 0 {

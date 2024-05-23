@@ -39,7 +39,7 @@ func DrawASCIIArt(characterMatrix map[rune][]string, splittedInput []string, has
 
 		for j := 0; j < 8; j++ {
 			for kIdx, k := range val {
-				shouldColorize := isInRange(kIdx, substringIndices, substringLen)
+				shouldColorize := substringLen == 0 || isInRange(kIdx, substringIndices, substringLen)
 				if color != "" && shouldColorize {
 					result.WriteString(Colorize(characterMatrix[k][j], color))
 				} else {
