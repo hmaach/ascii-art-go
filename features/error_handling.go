@@ -37,11 +37,11 @@ func HandleFlagCombination(flags map[string]string) {
 }
 
 func Usage() {
-	fmt.Fprintf(os.Stderr, "\n   Usage: go run . [OPTION] [STRING] [BANNER]\n\n")
+	fmt.Fprintf(os.Stderr, "Usage: go run . [OPTION] [STRING] [BANNER]\n\n")
 	if Flag == "output" {
-		fmt.Fprintf(os.Stderr, "   EX: go run . --output=<fileName.txt> something standard\n\n")
+		fmt.Fprintf(os.Stderr, "EX: go run . --output=<fileName.txt> something standard\n")
 	} else if Flag == "color" {
-		fmt.Fprintf(os.Stderr, "   EX: go run . --color=<color> <letters to be colored> \"something\"\n\n")
+		fmt.Fprintf(os.Stderr, "EX: go run . --color=<color> <letters to be colored> \"something\"\n")
 	} else {
 		fmt.Fprintf(os.Stderr, "   EX: go run . --output=<fileName.txt> something standard\n")
 		fmt.Fprintf(os.Stderr, "OR\n")
