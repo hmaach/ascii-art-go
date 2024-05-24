@@ -39,6 +39,14 @@ func HandleFlagCombination(flags map[string]string) {
 	}
 }
 
+func PrintColors() {
+	fmt.Println("Invalid color. Please choose one of the following colors:")
+	for name, code := range ColorMap {
+		fmt.Printf("- %s%s%s\n", code, name, Reset)
+	}
+	os.Exit(0)
+}
+
 func Usage() {
 	fmt.Fprintf(os.Stderr, "Usage: go run . [OPTION] [STRING] [BANNER]\n\n")
 	if Flag == "output" {

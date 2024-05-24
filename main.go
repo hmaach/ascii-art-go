@@ -12,7 +12,6 @@ func main() {
 	if len(defaultArgs) == 0 || len(defaultArgs[0]) == 0 {
 		if len(defaultArgs) > 1 && len(defaultArgs[0]) == 0 {
 			ft.Usage()
-			os.Exit(0)
 		}
 		return
 	}

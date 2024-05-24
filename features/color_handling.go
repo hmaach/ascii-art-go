@@ -2,7 +2,6 @@ package asciiart
 
 import (
 	"fmt"
-	"os"
 )
 
 const (
@@ -34,16 +33,7 @@ func Colorize(s, color string) string {
 	colorCode, exists := ColorMap[color]
 	if !exists {
 		PrintColors()
-		os.Exit(0)
 	}
 
 	return fmt.Sprintf("%s%s%s", colorCode, s, Reset)
-}
-
-func PrintColors() {
-	fmt.Println("Invalid color. Please choose one of the following colors:")
-	for name, code := range ColorMap {
-		fmt.Printf("- %s%s%s\n", code, name, Reset)
-	}
-	os.Exit(1)
 }
