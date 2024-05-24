@@ -1,7 +1,7 @@
 package asciiart
 
 func GetInputAndBanner(args []string) (string, string) {
-	var banner string = "standard.txt"
+	var banner string = "standard"
 	var input string
 
 	switch len(args) {

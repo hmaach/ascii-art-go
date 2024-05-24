@@ -32,8 +32,12 @@ func CheckValidInput(input string) {
 }
 
 func HandleFlagCombination(flags map[string]string) {
-	if flags["output"] != "" && flags["color"] != "" {
+	switch {
+	case flags["output"] != "" && flags["color"] != "":
 		fmt.Fprintf(os.Stderr, "you can't use '--output' and '--color' in the same command!\n")
+		os.Exit(1)
+	case flags["output"] != "" && flags["align"] != "":
+		fmt.Fprintf(os.Stderr, "you can't use '--output' and '--align' in the same command!\n")
 		os.Exit(1)
 	}
 }

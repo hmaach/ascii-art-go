@@ -15,7 +15,6 @@ func main() {
 		}
 		return
 	}
-
 	flag, args := ft.ExtractFlags(defaultArgs)
 
 	if err := ft.CheckArguments(args); err != nil {

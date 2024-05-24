@@ -10,8 +10,9 @@ var (
 	FlagDefs = []string{
 		"output",
 		"color",
+		"align",
 	}
-	Flag string = "color"
+	Flag string = "align"
 )
 
 // ExtractFlags extracts flags and their values from command-line arguments
@@ -23,7 +24,7 @@ func ExtractFlags(args []string) (map[string]string, []string) {
 		arg := args[i]
 		isFlag := false
 
-		if strings.HasPrefix(arg, "--") && i == 0 {
+		if strings.HasPrefix(arg, "--") && len(filteredArgs) == 0 {
 			flagKey, flagValue, found := findFlagAndExtractValue(arg)
 			if found {
 				Flag = strings.Trim(arg, "-=")
@@ -43,7 +44,6 @@ func ExtractFlags(args []string) (map[string]string, []string) {
 		}
 	}
 	HandleFlagCombination(flags)
-
 	return flags, filteredArgs
 }
 

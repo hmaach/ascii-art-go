@@ -1,6 +1,7 @@
 package asciiart
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -16,6 +17,12 @@ func ProcessInput(input, banner string, flag map[string]string) {
 	if lettersToBeColored != "" && strings.Contains(input, lettersToBeColored) {
 		runesToBeColored = []rune(lettersToBeColored)
 	}
+
+	width, errWidth := GetTerminalWidth()
+	if errWidth != nil {
+		fmt.Printf("Error getting terminal width: %v\n", errWidth)
+	}
+	fmt.Println(width)
 
 	result := DrawASCIIArt(characterMatrix, splittedInput, hasNonEmptyLines, flag, runesToBeColored)
 	SaveOrPrintResultToFile(flag["output"], result)
