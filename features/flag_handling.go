@@ -11,7 +11,7 @@ var (
 		"output",
 		"color",
 	}
-	Flag string // Current flag being processed
+	Flag string = "color"
 )
 
 // ExtractFlags extracts flags and their values from command-line arguments
@@ -24,15 +24,17 @@ func ExtractFlags(args []string) (map[string]string, []string) {
 		isFlag := false
 
 		if strings.HasPrefix(arg, "--") && i == 0 {
-			Flag = strings.Trim(arg, "-=")
 			flagKey, flagValue, found := findFlagAndExtractValue(arg)
 			if found {
+				Flag = strings.Trim(arg, "-=")
 				flags[flagKey] = flagValue
 				isFlag = true
 				if flagKey == "color" && len(args) > i+2 {
 					flags["lettersToBeColored"] = args[i+1]
 					i++
 				}
+			} else {
+				Usage()
 			}
 		}
 
