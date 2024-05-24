@@ -7,7 +7,7 @@ import (
 )
 
 func ReadBanner(banner string) map[rune][]string {
-	data, err := os.ReadFile("banners/" + banner)
+	data, err := os.ReadFile("banners/" + banner + ".txt")
 	if err != nil {
 		fmt.Printf("Error: %s", err)
 		os.Exit(1)
