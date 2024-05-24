@@ -6,7 +6,6 @@ import (
 	"os"
 )
 
-
 func CheckArguments(args []string) error {
 	argCount := len(args)
 	if argCount == 2 {
@@ -49,11 +48,14 @@ func PrintColors() {
 
 func Usage() {
 	fmt.Fprintf(os.Stderr, "Usage: go run . [OPTION] [STRING] [BANNER]\n\n")
-	if Flag == "output" {
+	switch Flag {
+	case "output":
 		fmt.Fprintf(os.Stderr, "EX: go run . --output=<fileName.txt> something standard\n")
-	} else if Flag == "color" {
+	case "color":
 		fmt.Fprintf(os.Stderr, "EX: go run . --color=<color> <letters to be colored> \"something\"\n")
-	} else {
+	case "align":
+		fmt.Fprintf(os.Stderr, "Example: go run . --align=right \"something\" standard\n")
+	default:
 		fmt.Fprintf(os.Stderr, "   EX: go run . --output=<fileName.txt> something standard\n")
 		fmt.Fprintf(os.Stderr, "OR\n")
 		fmt.Fprintf(os.Stderr, "   EX: go run . --color=<color> <letters to be colored> \"something\" shadow\n\n")
