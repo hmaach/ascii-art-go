@@ -2,6 +2,7 @@ package asciiart
 
 import (
 	"fmt"
+	"strings"
 )
 
 const (
@@ -36,4 +37,25 @@ func Colorize(s, color string) string {
 	}
 
 	return fmt.Sprintf("%s%s%s", colorCode, s, Reset)
+}
+
+// Checks if the given index is within any of the ranges specified by the start indices and length
+func isInRange(index int, indices []int, length int) bool {
+	for _, start := range indices {
+		if index >= start && index < start+length {
+			return true
+		}
+	}
+	return false
+}
+
+// FindSubStringIndices returns the start indices of all occurrences of the substring in the main string
+func FindSubStringIndices(str, substr string) []int {
+	var indices []int
+	for i := 0; i < len(str); i++ {
+		if strings.HasPrefix(str[i:], substr) {
+			indices = append(indices, i)
+		}
+	}
+	return indices
 }
