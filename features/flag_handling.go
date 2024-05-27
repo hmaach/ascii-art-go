@@ -49,34 +49,34 @@ func ExtractFlags(args []string) (map[string]string, []string) {
 
 // findFlagAndExtractValue searches for a flag in a given argument and extracts its value
 func findFlagAndExtractValue(arg string) (string, string, bool) {
-	for _, key := range FlagDefs {
-		if strings.Contains(arg, key) {
-			flagKey, flagValue := extractFlagValue(arg)
-			return flagKey, flagValue, true
-		}
+	flagKey, flagValue, found := extractFlagValue(arg)
+	if found {
+		return flagKey, flagValue, true
 	}
 	return "", "", false
 }
 
 // ExtractFlagValue splits a flag into its key and value components
-func extractFlagValue(flag string) (string, string) {
-	splittedFlag := strings.SplitN(flag, "=", 2)
-
-	// Handle missing value case
+func extractFlagValue(arg string) (string, string, bool) {
+	// Check if the argument contains '='
+	splittedFlag := strings.SplitN(arg, "=", 2)
 	if len(splittedFlag) < 2 || len(splittedFlag[1]) == 0 {
 		Usage()
 	}
 
-	for _, prefix := range FlagDefs {
-		if splittedFlag[0] == "--"+prefix {
-			// Append .txt extension if the flag is 'output' and does not already have it
-			if prefix == "output" && filepath.Ext(splittedFlag[1]) != ".txt" {
-				splittedFlag[1] += ".txt"
+	flagKey := strings.TrimPrefix(splittedFlag[0], "--")
+	flagValue := splittedFlag[1]
+
+	for _, key := range FlagDefs {
+		if flagKey == key {
+			// Append .txt extension if the flag is 'output' OR does not already have it
+			if key == "output" && filepath.Ext(flagValue) != ".txt" {
+				flagValue += ".txt"
 			}
-			return prefix, strings.ToLower(splittedFlag[1])
+			return key, strings.ToLower(flagValue), true
 		}
 	}
 
 	Usage()
-	return "", ""
+	return "", "",false
 }
