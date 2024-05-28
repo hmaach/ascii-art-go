@@ -15,7 +15,7 @@ func main() {
 		}
 		return
 	}
-	flag, args := ft.ExtractFlags(defaultArgs)
+	flags, args := ft.ExtractFlags(defaultArgs)
 
 	if err := ft.CheckArguments(args); err != nil {
 		fmt.Println(err)
@@ -24,5 +24,5 @@ func main() {
 	// Specify the ASCII art banner file to use
 	input, banner := ft.GetInputAndBanner(args)
 	ft.CheckValidInput(input)
-	ft.ProcessInput(input, banner, flag)
+	ft.ProcessInput(input, banner, flags)
 }

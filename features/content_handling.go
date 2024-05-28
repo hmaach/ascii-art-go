@@ -24,13 +24,16 @@ func CheckEmptyLines(splittedInput []string) bool {
 	return false
 }
 
-func SaveOrPrintResultToFile(outputFile, result string) {
-	if outputFile != "" {
-		err := SaveFile(outputFile, result)
+func SaveOrPrintResultToFile(result string, flag map[string]string) {
+	if flag["output"] != "" {
+		err := SaveFile(flag["output"], result)
 		if err != nil {
 			fmt.Println("Error:", err)
 		}
 	} else {
+		if flag["align"] != "" && flag["align"] != "left" {
+			result = Justify(result, flag["align"])
+		}
 		fmt.Printf("%s", result)
 	}
 }
