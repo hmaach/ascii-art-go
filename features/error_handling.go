@@ -50,6 +50,14 @@ func PrintColors() {
 	os.Exit(0)
 }
 
+func PrintAlignments() {
+	fmt.Println("Invalid alignment. Please choose one of the following alignment:")
+	for _, align := range Alignments {
+		fmt.Printf("- %s\n", align)
+	}
+	os.Exit(0)
+}
+
 func Usage() {
 	fmt.Fprintf(os.Stderr, "Usage: go run . [OPTION] [STRING] [BANNER]\n\n")
 	switch Flag {
