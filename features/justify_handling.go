@@ -1,6 +1,7 @@
 package asciiart
 
 import (
+	"fmt"
 	"os"
 	"os/exec"
 	"strconv"
@@ -8,7 +9,7 @@ import (
 )
 
 var Alignments = []string{
-	"center", "left", "right", "justify",
+	"left", "center", "right", "justify",
 }
 
 func IsValidAlignment(align string) bool {
@@ -20,17 +21,85 @@ func IsValidAlignment(align string) bool {
 	return false
 }
 
-func GetTerminalWidth() (int, error) {
+func GetTerminalWidth() int {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
+
 	output, err := cmd.Output()
 	if err != nil {
-		return 0, err
+		fmt.Printf("Error getting terminal width: %v\n", err)
+		os.Exit(1)
 	}
+
 	sliceOutput := strings.Fields(string(output))
 	width, errAtoi := strconv.Atoi(sliceOutput[1])
 	if errAtoi != nil {
-		return 0, err
+		fmt.Printf("Error: %v\n", errAtoi)
+		os.Exit(1)
 	}
-	return width, nil
+
+	return width
+}
+
+func AddSpacesBeforeLines(
+	lines []string,
+	align string,
+	width, outpuLength int,
+) string {
+	var spacesToAdd int
+	switch align {
+	case "center":
+		spacesToAdd = (width - outpuLength) / 2
+	case "right":
+		spacesToAdd = width - outpuLength
+	}
+
+	spaceString := strings.Repeat(" ", spacesToAdd)
+
+	for i, line := range lines {
+		if i < len(lines)-1 {
+			lines[i] = spaceString + line
+		}
+	}
+	return strings.Join(lines, "\n")
+}
+
+func AddSpacesBetweenWords(
+	lines []string,
+	width, outpuLength int,
+) string {
+	wordsNumber := strings.Count(lines[0], "{space}") + 1
+	if wordsNumber > 1 {
+		wordsWithoutSpaces := strings.ReplaceAll(lines[0], "{space}", "")
+		lettersLength := len(wordsWithoutSpaces)
+		spacesToAdd := (width - lettersLength) / (wordsNumber - 1)
+
+		spaceString := strings.Repeat(" ", spacesToAdd)
+
+		for i, line := range lines {
+			if i < len(lines)-1 {
+				lines[i] = strings.ReplaceAll(line, "{space}", spaceString)
+			}
+		}
+	}
+	return strings.Join(lines, "\n")
+}
+
+func Justify(str, align string) string {
+	var result string
+	// check if the alignment is valid
+	if !IsValidAlignment(align) {
+		PrintAlignments()
+	}
+
+	width := GetTerminalWidth()
+
+	lines := strings.Split(str, "\n")
+	outpuLength := len(lines[0])
+	if align == "justify" {
+		result = AddSpacesBetweenWords(lines, width, outpuLength)
+	} else {
+		result = AddSpacesBeforeLines(lines, align, width, outpuLength)
+	}
+	return result
 }
