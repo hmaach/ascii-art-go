@@ -4,9 +4,23 @@ import (
 	"strings"
 )
 
+func handleSpaces(splittedInput []string) []string {
+	for i, line := range splittedInput {
+		tempLine := strings.Fields(line)
+		splittedInput[i] = strings.Join(tempLine, " ")
+	}
+	return splittedInput
+}
+
+
 // ProcessInput processes the input string, reads the banner, and produces the ASCII art
 func ProcessInput(input, banner string, flags map[string]string) {
 	splittedInput := strings.Split(input, "\\n")
+
+	if flags["align"] == "justify" {
+		splittedInput = handleSpaces(splittedInput)
+	}
+
 	hasNonEmptyLines := CheckEmptyLines(splittedInput)
 	characterMatrix := ReadBanner(banner)
 
