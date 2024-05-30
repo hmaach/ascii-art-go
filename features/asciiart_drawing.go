@@ -9,40 +9,42 @@ func DrawASCIIArt(
 	hasNonEmptyLines bool,
 	flag map[string]string,
 	runesToBeColored []rune,
-) string {
-	var result strings.Builder
+) []string {
+	var result []string
 	color := flag["color"]
-
 	for i, inputLine := range splittedInput {
+		var resultLine strings.Builder
 		if inputLine == "" {
 			if hasNonEmptyLines || i != 0 {
-				result.WriteString("\n")
+				resultLine.WriteString("\n")
 			}
 			continue
 		}
-
 		// Find the starting indices of all occurrences of the substring to be colored
-		substringIndices := FindSubStringIndices(inputLine, flag["lettersToBeColored"])
-		substringLen := len(flag["lettersToBeColored"])
-
+		var substringIndices []int
+		var substringLen int
+		if color != "" {
+			substringIndices = FindSubStringIndices(inputLine, flag["lettersToBeColored"])
+			substringLen = len(flag["lettersToBeColored"])
+		}
 		// Draw each character of the line in ASCII art format
 		for line := 0; line < 8; line++ {
 			for charIdx, char := range inputLine {
 				// Determine if the current character should be colorized
 				shouldColorize := substringLen == 0 || isInRange(charIdx, substringIndices, substringLen)
 				if color != "" && shouldColorize && char != 32 {
-					result.WriteString(Colorize(characterMatrix[char][line], color))
+					resultLine.WriteString(Colorize(characterMatrix[char][line], color))
 				} else {
 					if char == 32 && flag["align"] == "justify" {
-						result.WriteString("{space}")
+						resultLine.WriteString("{space}")
 					} else {
-						result.WriteString(characterMatrix[char][line])
+						resultLine.WriteString(characterMatrix[char][line])
 					}
 				}
 			}
-			result.WriteString("\n")
+			resultLine.WriteString("\n")
 		}
+		result = append(result, resultLine.String())
 	}
-
-	return result.String()
+	return result
 }
