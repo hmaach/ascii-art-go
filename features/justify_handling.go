@@ -54,6 +54,9 @@ func AddSpacesBeforeLines(
 		spacesToAdd = width - outpuLength
 	}
 
+	if spacesToAdd < 0 {
+		spacesToAdd = 0
+	}
 	spaceString := strings.Repeat(" ", spacesToAdd)
 
 	for i, line := range lines {
