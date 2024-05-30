@@ -1,6 +1,8 @@
 package asciiart
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -70,13 +72,19 @@ func extractFlagValue(arg string) (string, string, bool) {
 	for _, key := range FlagDefs {
 		if flagKey == key {
 			// Append .txt extension if the flag is 'output' OR does not already have it
-			if key == "output" && filepath.Ext(flagValue) != ".txt" {
-				flagValue += ".txt"
+			if key == "output" {
+				if strings.ContainsAny(flagValue, "/\\") {
+					fmt.Printf("Error: you can not use '/' or '\\' in the name of the output file\n")
+					os.Exit(1)
+				}
+				if filepath.Ext(flagValue) != ".txt" {
+					flagValue += ".txt"
+				}
 			}
 			return key, strings.ToLower(flagValue), true
 		}
 	}
 
 	Usage()
-	return "", "",false
+	return "", "", false
 }
