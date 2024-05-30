@@ -55,6 +55,9 @@ func FindSubStringIndices(str, substr string) []int {
 	for i := 0; i < len(str); i++ {
 		if strings.HasPrefix(str[i:], substr) {
 			indices = append(indices, i)
+			if len(str) > i+len(substr) {
+				i = i + len(substr) -1
+			}
 		}
 	}
 	return indices
