@@ -22,10 +22,9 @@ func DrawASCIIArt(
 		}
 		// Find the starting indices of all occurrences of the substring to be colored
 		var substringIndices []int
-		var substringLen int
-		if color != "" {
+		substringLen := len(flag["lettersToBeColored"])
+		if color != "" && substringLen > 0 {
 			substringIndices = FindSubStringIndices(inputLine, flag["lettersToBeColored"])
-			substringLen = len(flag["lettersToBeColored"])
 		}
 		// Draw each character of the line in ASCII art format
 		for line := 0; line < 8; line++ {
