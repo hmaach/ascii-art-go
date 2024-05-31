@@ -14,18 +14,8 @@ func ConvertToCharacterMatrix(content []string) map[rune][]string {
 	return characterMatrix
 }
 
-// Check if there are any non-empty lines in the input lines array
-func CheckEmptyLines(splittedInput []string) bool {
-	for _, line := range splittedInput {
-		if line != "" {
-			return true
-		}
-	}
-	return false
-}
-
 func saveResultToFile(result []string, outputPath string) {
-	strResult := strings.Join(result, "\n")
+	strResult := strings.Join(result, "")
 	err := SaveFile(outputPath, strResult)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -38,7 +28,7 @@ func printResult(lines []string, alignment string) {
 			lines[i] = Justify(line, alignment)
 		}
 	}
-	result := strings.Join(lines, "\n")
+	result := strings.Join(lines, "")
 	fmt.Printf("%s", result)
 }
 

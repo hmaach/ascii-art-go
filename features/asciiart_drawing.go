@@ -1,25 +1,44 @@
 package asciiart
 
-import "strings"
+import (
+	"strings"
+)
+
+// Check if there are any non-empty lines in the input lines array
+func checkEmptyLines(splittedInput []string) bool {
+	for _, line := range splittedInput {
+		if line != "" {
+			return false
+		}
+	}
+	return true
+}
 
 // DrawASCIIArt draws ASCII art and colorizes specific substrings
 func DrawASCIIArt(
 	characterMatrix map[rune][]string,
 	splittedInput []string,
-	hasNonEmptyLines bool,
 	flag map[string]string,
 	runesToBeColored []rune,
 ) []string {
 	var result []string
 	color := flag["color"]
-	for i, inputLine := range splittedInput {
+
+	// check if the input contain only new lines
+	emptyLines := checkEmptyLines(splittedInput)
+	if emptyLines {
+		newLines := strings.Repeat("\n", len(splittedInput)-1)
+		result = append(result, newLines)
+		return result
+	}
+
+	for _, inputLine := range splittedInput {
 		var resultLine strings.Builder
 		if inputLine == "" {
-			if hasNonEmptyLines || i != 0 {
-				resultLine.WriteString("\n")
-			}
+			result = append(result, "\n")
 			continue
 		}
+
 		// Find the starting indices of all occurrences of the substring to be colored
 		var substringIndices []int
 		substringLen := len(flag["lettersToBeColored"])

@@ -21,7 +21,6 @@ func ProcessInput(input, banner string, flags map[string]string) {
 		splittedInput = handleSpaces(splittedInput)
 	}
 
-	hasNonEmptyLines := CheckEmptyLines(splittedInput)
 	characterMatrix := ReadBanner(banner)
 
 	var runesToBeColored []rune
@@ -33,7 +32,6 @@ func ProcessInput(input, banner string, flags map[string]string) {
 
 	result := DrawASCIIArt(characterMatrix,
 		splittedInput,
-		hasNonEmptyLines,
 		flags,
 		runesToBeColored)
 	SaveOrPrintResultToFile(result, flags)
