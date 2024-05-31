@@ -49,9 +49,9 @@ func AddSpacesBeforeLines(
 	var spacesToAdd int
 	switch align {
 	case "center":
-		spacesToAdd = (width - outpuLength) / 2
+		spacesToAdd = (width - outpuLength + (SpacesOfColor / 8)) / 2
 	case "right":
-		spacesToAdd = width - outpuLength
+		spacesToAdd = width - outpuLength + (SpacesOfColor / 8)
 	}
 
 	if spacesToAdd < 0 {
@@ -74,8 +74,11 @@ func AddSpacesBetweenWords(
 	wordsNumber := strings.Count(lines[0], "{space}") + 1
 	if wordsNumber > 1 {
 		wordsWithoutSpaces := strings.ReplaceAll(lines[0], "{space}", "")
-		lettersLength := len(wordsWithoutSpaces)
-		spacesToAdd := (width - lettersLength) / (wordsNumber - 1)
+		lettersLength := len(wordsWithoutSpaces) + 1
+		spacesToAdd := (width - lettersLength + (SpacesOfColor / 8)) / (wordsNumber - 1)
+		if spacesToAdd < 0 {
+			spacesToAdd = 0
+		}
 
 		spaceString := strings.Repeat(" ", spacesToAdd)
 

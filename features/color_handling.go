@@ -30,11 +30,15 @@ var ColorMap = map[string]string{
 	"white":   White,
 }
 
+var SpacesOfColor int
+
 func Colorize(s, color string) string {
 	colorCode, exists := ColorMap[color]
 	if !exists {
 		PrintColors()
 	}
+
+	SpacesOfColor += len(colorCode) + len(Reset) 
 
 	return fmt.Sprintf("%s%s%s", colorCode, s, Reset)
 }
@@ -56,7 +60,7 @@ func FindSubStringIndices(str, substr string) []int {
 		if strings.HasPrefix(str[i:], substr) {
 			indices = append(indices, i)
 			if len(str) > i+len(substr) {
-				i = i + len(substr) -1
+				i = i + len(substr) - 1
 			}
 		}
 	}
