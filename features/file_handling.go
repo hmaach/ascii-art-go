@@ -17,8 +17,8 @@ func ReadBanner(banner string) map[rune][]string {
 		stringData = strings.ReplaceAll(stringData, "\r", "")
 	}
 	content := strings.Split(stringData, "\n\n")
-	characterMatrix := ConvertToCharacterMatrix(content)
-	return characterMatrix
+	charactersMap := ConvertTocharacterMap(content)
+	return charactersMap
 }
 
 func SaveFile(fileName string, str string) error {

@@ -6,13 +6,13 @@ import (
 	"strings"
 )
 
-// Convert content array to a character matrix mapping ASCII characters to their line representations
-func ConvertToCharacterMatrix(content []string) map[rune][]string {
-	characterMatrix := map[rune][]string{}
+// Convert content array to a character mapping ASCII characters to their line representations
+func ConvertTocharacterMap(content []string) map[rune][]string {
+	charactersMap := map[rune][]string{}
 	for i, val := range content {
-		characterMatrix[rune(32+i)] = strings.Split(val, "\n")
+		charactersMap[rune(32+i)] = strings.Split(val, "\n")
 	}
-	return characterMatrix
+	return charactersMap
 }
 
 func saveResultToFile(result []string, outputPath string) {

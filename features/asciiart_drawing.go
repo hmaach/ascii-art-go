@@ -16,7 +16,7 @@ func checkEmptyLines(splittedInput []string) bool {
 
 // DrawASCIIArt draws ASCII art and colorizes specific substrings
 func DrawASCIIArt(
-	characterMatrix map[rune][]string,
+	charactersMap map[rune][]string,
 	splittedInput []string,
 	flag map[string]string,
 	runesToBeColored []rune,
@@ -51,12 +51,12 @@ func DrawASCIIArt(
 				// Determine if the current character should be colorized
 				shouldColorize := substringLen == 0 || isInRange(charIdx, substringIndices, substringLen)
 				if color != "" && shouldColorize && char != 32 {
-					resultLine.WriteString(Colorize(characterMatrix[char][line], color))
+					resultLine.WriteString(Colorize(charactersMap[char][line], color))
 				} else {
 					if char == 32 && flag["align"] == "justify" {
 						resultLine.WriteString("{space}")
 					} else {
-						resultLine.WriteString(characterMatrix[char][line])
+						resultLine.WriteString(charactersMap[char][line])
 					}
 				}
 			}

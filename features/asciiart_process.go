@@ -21,7 +21,7 @@ func ProcessInput(input, banner string, flags map[string]string) {
 		splittedInput = handleSpaces(splittedInput)
 	}
 
-	characterMatrix := ReadBanner(banner)
+	charactersMap := ReadBanner(banner)
 
 	var runesToBeColored []rune
 	lettersToBeColored := flags["lettersToBeColored"]
@@ -30,7 +30,7 @@ func ProcessInput(input, banner string, flags map[string]string) {
 		runesToBeColored = []rune(lettersToBeColored)
 	}
 
-	result := DrawASCIIArt(characterMatrix,
+	result := DrawASCIIArt(charactersMap,
 		splittedInput,
 		flags,
 		runesToBeColored)
