@@ -13,7 +13,7 @@ func ReadBanner(banner string) map[rune][]string {
 		os.Exit(1)
 	}
 	stringData := string(data[1:])
-	if banner == "thinkertoy.txt" {
+	if banner == "thinkertoy" {
 		stringData = strings.ReplaceAll(stringData, "\r", "")
 	}
 	content := strings.Split(stringData, "\n\n")
