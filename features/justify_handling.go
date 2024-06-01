@@ -58,22 +58,20 @@ func addSpacesBetweenWords(
 	lines []string,
 	width, outputWithoutSpaces int,
 ) string {
-	wordsNumber := strings.Count(lines[0], "{space}")
-	if wordsNumber > 1 {
-		spacesToAdd := (width - outputWithoutSpaces) / wordsNumber
-		spaceString := strings.Repeat(" ", spacesToAdd)
+	spaceCountBetweenWords := strings.Count(lines[0], "{space}")
+	spacesToAdd := (width - outputWithoutSpaces) / spaceCountBetweenWords
+	spaceString := strings.Repeat(" ", spacesToAdd)
 
-		for i, line := range lines {
-			if i < len(lines)-1 {
-				lines[i] = strings.ReplaceAll(line, "{space}", spaceString)
-			}
+	for i := 0; i < len(lines); i++ {
+		if i < len(lines)-1 {
+			lines[i] = strings.ReplaceAll(lines[i], "{space}", spaceString)
 		}
 	}
 	return strings.Join(lines, "\n")
 }
 
 // alignText aligns text based on the alignment type and terminal width.
-func alignText(lines []string, flags map[string]string, width int, outputLength int) string {
+func alignText(lines []string, flags map[string]string, width, LineIdx, outputLength int) string {
 	align := flags["align"]
 	spacesToAdd := (width - outputLength)
 
@@ -83,10 +81,9 @@ func alignText(lines []string, flags map[string]string, width int, outputLength 
 
 	if align == "justify" {
 		outputWithoutSpaces := len(strings.ReplaceAll(lines[0], "{space}", ""))
-
 		// Adjust for color codes if present
 		if flags["color"] != "" {
-			outputWithoutSpaces -= (SpacesOfColor / 8) // Adjust length for color codes
+			outputWithoutSpaces -= SpacesOfColor[LineIdx] / 8 // Adjust length for color codes
 		}
 
 		return addSpacesBetweenWords(lines, width, outputWithoutSpaces)
@@ -96,7 +93,7 @@ func alignText(lines []string, flags map[string]string, width int, outputLength 
 }
 
 // Justify aligns the ASCII art string based on the specified alignment.
-func Justify(str string, flags map[string]string) (string, error) {
+func Justify(str string, LineIdx int, flags map[string]string) (string, error) {
 	// Validate alignment
 	align := flags["align"]
 	if !slices.Contains(Alignments, align) {
@@ -113,12 +110,8 @@ func Justify(str string, flags map[string]string) (string, error) {
 	// Adjust output length for color codes if present
 	outputLength := len(lines[0])
 	if flags["color"] != "" {
-		outputLength -= (SpacesOfColor / 8) // Adjust length for color codes
+		outputLength -= SpacesOfColor[LineIdx] / 8 // Adjust length for color codes
 	}
 
-	if outputLength > width {
-		return "", errors.New("error: ASCII art exceeds terminal width")
-	}
-
-	return alignText(lines, flags, width, outputLength), nil
+	return alignText(lines, flags, width, LineIdx, outputLength), nil
 }

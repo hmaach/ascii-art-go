@@ -32,7 +32,7 @@ func DrawASCIIArt(
 		return result
 	}
 
-	for _, inputLine := range splittedInput {
+	for inputLineIdx, inputLine := range splittedInput {
 		var resultLine strings.Builder
 		if inputLine == "" {
 			result = append(result, "\n")
@@ -51,7 +51,7 @@ func DrawASCIIArt(
 				// Determine if the current character should be colorized
 				shouldColorize := substringLen == 0 || isInRange(charIdx, substringIndices, substringLen)
 				if color != "" && shouldColorize && char != 32 {
-					resultLine.WriteString(Colorize(charactersMap[char][line], color))
+					resultLine.WriteString(Colorize(charactersMap[char][line], color, inputLineIdx))
 				} else {
 					if char == 32 && flag["align"] == "justify" {
 						resultLine.WriteString("{space}")

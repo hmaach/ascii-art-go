@@ -29,7 +29,7 @@ func printResult(lines []string, flags map[string]string) {
 
 	if alignment != "" && alignment != "left" {
 		for i, line := range lines {
-			justifiedLine, err := Justify(line, flags)
+			justifiedLine, err := Justify(line, i, flags)
 			if err != nil {
 				fmt.Printf("Error justifying line: %v\n", err)
 				os.Exit(2)
