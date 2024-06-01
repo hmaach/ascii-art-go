@@ -2,6 +2,7 @@ package asciiart
 
 import (
 	"fmt"
+	"os"
 	"strings"
 )
 
@@ -22,20 +23,28 @@ func saveResultToFile(result []string, outputPath string) {
 	}
 }
 
-func printResult(lines []string, alignment string) {
+// printResult processes and prints lines based on the specified alignment.
+func printResult(lines []string, flags map[string]string) {
+	alignment := flags["align"]
+
 	if alignment != "" && alignment != "left" {
 		for i, line := range lines {
-			lines[i] = Justify(line, alignment)
+			justifiedLine, err := Justify(line, flags)
+			if err != nil {
+				fmt.Printf("Error justifying line: %v\n", err)
+				os.Exit(2)
+			}
+			lines[i] = justifiedLine
 		}
 	}
 	result := strings.Join(lines, "")
 	fmt.Printf("%s", result)
 }
 
-func SaveOrPrintResultToFile(result []string, flag map[string]string) {
-	if flag["output"] != "" {
-		saveResultToFile(result, flag["output"])
+func SaveOrPrintResultToFile(result []string, flags map[string]string) {
+	if flags["output"] != "" {
+		saveResultToFile(result, flags["output"])
 	} else {
-		printResult(result, flag["align"])
+		printResult(result, flags)
 	}
 }

@@ -1,62 +1,48 @@
 package asciiart
 
 import (
+	"errors"
 	"fmt"
 	"os"
 	"os/exec"
+	"slices"
 	"strconv"
 	"strings"
 )
 
+// Alignments contains the list of valid alignments
 var Alignments = []string{
 	"left", "center", "right", "justify",
 }
 
-func IsValidAlignment(align string) bool {
-	for _, a := range Alignments {
-		if a == align {
-			return true
-		}
-	}
-	return false
-}
-
-func GetTerminalWidth() int {
+// getTerminalWidth fetches the current terminal width
+func getTerminalWidth() (int, error) {
 	cmd := exec.Command("stty", "size")
 	cmd.Stdin = os.Stdin
 
 	output, err := cmd.Output()
 	if err != nil {
-		fmt.Printf("Error getting terminal width: %v\n", err)
-		os.Exit(1)
+		return 0, fmt.Errorf("error getting terminal width: %v", err)
 	}
 
 	sliceOutput := strings.Fields(string(output))
-	width, errAtoi := strconv.Atoi(sliceOutput[1])
-	if errAtoi != nil {
-		fmt.Printf("Error: %v\n", errAtoi)
-		os.Exit(1)
+	if len(sliceOutput) < 2 {
+		return 0, errors.New("unexpected output from stty command")
 	}
 
-	return width
+	width, err := strconv.Atoi(sliceOutput[1])
+	if err != nil {
+		return 0, fmt.Errorf("error converting terminal width to integer: %v", err)
+	}
+
+	return width, nil
 }
 
-func AddSpacesBeforeLines(
+// add leading spaces to lines based on the specified spaces number
+func addSpacesBeforeLines(
 	lines []string,
-	align string,
-	width, outpuLength int,
+	spacesToAdd int,
 ) string {
-	var spacesToAdd int
-	switch align {
-	case "center":
-		spacesToAdd = (width - outpuLength + (SpacesOfColor / 8)) / 2
-	case "right":
-		spacesToAdd = width - outpuLength + (SpacesOfColor / 8)
-	}
-
-	if spacesToAdd < 0 {
-		spacesToAdd = 0
-	}
 	spaceString := strings.Repeat(" ", spacesToAdd)
 
 	for i, line := range lines {
@@ -67,19 +53,14 @@ func AddSpacesBeforeLines(
 	return strings.Join(lines, "\n")
 }
 
-func AddSpacesBetweenWords(
+// adds spaces between words to justify text alignment
+func addSpacesBetweenWords(
 	lines []string,
-	width, outpuLength int,
+	width, outputWithoutSpaces int,
 ) string {
-	wordsNumber := strings.Count(lines[0], "{space}") + 1
+	wordsNumber := strings.Count(lines[0], "{space}")
 	if wordsNumber > 1 {
-		wordsWithoutSpaces := strings.ReplaceAll(lines[0], "{space}", "")
-		lettersLength := len(wordsWithoutSpaces) + 1
-		spacesToAdd := (width - lettersLength + (SpacesOfColor / 8)) / (wordsNumber - 1)
-		if spacesToAdd < 0 {
-			spacesToAdd = 0
-		}
-
+		spacesToAdd := (width - outputWithoutSpaces) / wordsNumber
 		spaceString := strings.Repeat(" ", spacesToAdd)
 
 		for i, line := range lines {
@@ -91,21 +72,53 @@ func AddSpacesBetweenWords(
 	return strings.Join(lines, "\n")
 }
 
-func Justify(str, align string) string {
-	var result string
-	// check if the alignment is valid
-	if !IsValidAlignment(align) {
-		PrintAlignments()
+// alignText aligns text based on the alignment type and terminal width.
+func alignText(lines []string, flags map[string]string, width int, outputLength int) string {
+	align := flags["align"]
+	spacesToAdd := (width - outputLength)
+
+	if align == "center" {
+		spacesToAdd /= 2
 	}
 
-	width := GetTerminalWidth()
+	if align == "justify" {
+		outputWithoutSpaces := len(strings.ReplaceAll(lines[0], "{space}", ""))
+
+		// Adjust for color codes if present
+		if flags["color"] != "" {
+			outputWithoutSpaces -= (SpacesOfColor / 8) // Adjust length for color codes
+		}
+
+		return addSpacesBetweenWords(lines, width, outputWithoutSpaces)
+	}
+
+	return addSpacesBeforeLines(lines, spacesToAdd)
+}
+
+// Justify aligns the ASCII art string based on the specified alignment.
+func Justify(str string, flags map[string]string) (string, error) {
+	// Validate alignment
+	align := flags["align"]
+	if !slices.Contains(Alignments, align) {
+		return "", fmt.Errorf("invalid alignment: '%s'.\nValid alignments are: %v", align, Alignments)
+	}
+
+	width, err := getTerminalWidth()
+	if err != nil {
+		return "", err
+	}
 
 	lines := strings.Split(str, "\n")
-	outpuLength := len(lines[0])
-	if align == "justify" {
-		result = AddSpacesBetweenWords(lines, width, outpuLength)
-	} else {
-		result = AddSpacesBeforeLines(lines, align, width, outpuLength)
+
+	// Adjust output length for color codes if present
+	outputLength := len(lines[0])
+	if flags["color"] != "" {
+		outputLength -= (SpacesOfColor / 8) // Adjust length for color codes
 	}
-	return result
+
+	if outputLength > width {
+		return "", errors.New("error: ASCII art exceeds terminal width")
+	}
+
+	return alignText(lines, flags, width, outputLength), nil
 }
