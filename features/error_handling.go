@@ -26,7 +26,7 @@ func CheckValidInput(input string) {
 	for _, char := range input {
 		if int(char) < 32 || int(char) > 126 {
 			fmt.Println("Error: The input contains characters without corresponding ASCII art representation!")
-			os.Exit(1)
+			os.Exit(2)
 		}
 	}
 }
@@ -38,7 +38,7 @@ func HandleFlagCombination(flags map[string]string) {
 		os.Exit(1)
 	case flags["output"] != "" && flags["align"] != "":
 		fmt.Fprintf(os.Stderr, "you can't use '--output' and '--align' in the same command!\n")
-		os.Exit(1)
+		os.Exit(2)
 	}
 }
 
@@ -47,7 +47,7 @@ func PrintColors() {
 	for name, code := range ColorMap {
 		fmt.Printf("- %s%s%s\n", code, name, Reset)
 	}
-	os.Exit(0)
+	os.Exit(2)
 }
 
 func PrintAlignments() {
@@ -55,7 +55,7 @@ func PrintAlignments() {
 	for _, align := range Alignments {
 		fmt.Printf("- %s\n", align)
 	}
-	os.Exit(0)
+	os.Exit(2)
 }
 
 func Usage() {
@@ -72,5 +72,5 @@ func Usage() {
 		fmt.Fprintf(os.Stderr, "OR\n")
 		fmt.Fprintf(os.Stderr, "   EX: go run . --color=<color> <letters to be colored> \"something\" shadow\n\n")
 	}
-	os.Exit(0)
+	os.Exit(2)
 }
