@@ -59,7 +59,10 @@ func addSpacesBetweenWords(
 	width, outputWithoutSpaces int,
 ) string {
 	spaceCountBetweenWords := strings.Count(lines[0], "{space}")
-	spacesToAdd := (width - outputWithoutSpaces) / spaceCountBetweenWords
+	spacesToAdd := (width - outputWithoutSpaces)
+	if spaceCountBetweenWords > 0 {
+		spacesToAdd /= spaceCountBetweenWords
+	}
 	spaceString := strings.Repeat(" ", spacesToAdd)
 
 	for i := 0; i < len(lines); i++ {
