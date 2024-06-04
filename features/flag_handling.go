@@ -28,13 +28,19 @@ func ExtractFlags(args []string) (map[string]string, []string) {
 
 		if strings.HasPrefix(arg, "--") && len(filteredArgs) == 0 {
 			flagKey, flagValue, found := findFlagAndExtractValue(arg)
+			Flag = strings.Trim(strings.SplitN(arg, "=", 2)[0], "-")
 			if found {
-				Flag = strings.Trim(arg, "-=")
 				flags[flagKey] = flagValue
 				isFlag = true
-				if flagKey == "color" && len(args) > i+2 && !strings.HasPrefix(args[i+1], "--") {
-					flags["lettersToBeColored"] = args[i+1]
-					i++
+				if flagKey == "color" {
+					_, exists := ColorMap[flagValue]
+					if !exists {
+						PrintColors()
+					}
+					if len(args) > i+2 && !strings.HasPrefix(args[i+1], "--") {
+						flags["lettersToBeColored"] = args[i+1]
+						i++
+					}
 				}
 			} else {
 				Usage()

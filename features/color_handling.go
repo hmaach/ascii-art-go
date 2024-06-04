@@ -33,10 +33,8 @@ var ColorMap = map[string]string{
 var SpacesOfColor []int
 
 func Colorize(s, color string, inputLineIdx int) string {
-	colorCode, exists := ColorMap[color]
-	if !exists {
-		PrintColors()
-	}
+	colorCode := ColorMap[color]
+
 	SpacesOfColor[inputLineIdx] += len(colorCode) + len(Reset)
 
 	return fmt.Sprintf("%s%s%s", colorCode, s, Reset)
